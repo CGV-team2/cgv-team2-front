@@ -30,9 +30,6 @@ const TicketBooking = () => {
       try {
         const response = await axios.request(options);
         setMovies(response.data.results);
-        if (response.data.results.length > 0) {
-          setSelectedMovie(response.data.results[0]);
-        }
       } catch (error) {
         console.error("API를 불러오지 못했습니다.", error);
       }
@@ -224,12 +221,26 @@ const TicketBooking = () => {
                   시간
                 </h2>
 
-                <div className="p-4">
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-[url('http://img.cgv.co.kr/CGV_RIA/Ticket/image/reservation/icon/icon_morning_night.png')] bg-no-repeat bg-[0_0px]"></div>
-                    <span>모닝</span>
-                    <img src="http://img.cgv.co.kr/CGV_RIA/Ticket/image/reservation/icon/icon_morning_night.png" />
+                <div className="p-4 font-bold">
+                  <div className="flex items-center pb-2 mb-3 border-b-[3px] border-[#CFCDC3]">
+                    <div className="w-4 h-4 bg-[url('http://img.cgv.co.kr/CGV_RIA/Ticket/image/reservation/icon/icon_morning_night.png')] bg-no-repeat bg-[0_0px] mr-1"></div>
+                    <span className="mr-3">모닝</span>
+
+                    <div className="w-4 h-4 bg-[url('http://img.cgv.co.kr/CGV_RIA/Ticket/image/reservation/icon/icon_morning_night.png')] bg-no-repeat bg-[0_-20px]"></div>
                     <span>심야</span>
+                  </div>
+
+                  <div>
+                    <div className="mb-2">
+                      <span className="text-[#B54D15]">2D</span> 1관
+                    </div>
+                    <ul>
+                      <li>
+                        <span className="cursor-pointer text-white bg-[#333333] border-black border-2 py-1 px-2">
+                          10:00
+                        </span>
+                      </li>
+                    </ul>
                   </div>
                 </div>
                 {/* <div className="grid grid-cols-2 gap-2 p-4">
@@ -249,27 +260,57 @@ const TicketBooking = () => {
         </div>
       </div>
 
-      <div className="bg-black text-white p-4 ">
-        <div className="w-[65%] min-w-[980px] max-w-7xl mx-auto py-4 flex justify-between items-center">
+      <div className="h-32 bg-black text-white/80 p-3">
+        <div className="w-[65%] min-w-[980px] max-w-7xl h-full mx-auto flex justify-between items-center">
           <div className="flex items-center">
-            {selectedMovie && (
-              <img
-                src={`${IMG_BASE_URL}${selectedMovie.poster_path}`}
-                alt={selectedMovie.title}
-                className="w-24 h-36 object-cover mr-4 rounded"
-              />
-            )}
+            <div className="w-[212px] h-24 border-r-[3px] border-white/20 flex items-center overflow-hidden">
+              {selectedMovie ? (
+                <div className="flex">
+                  <img
+                    src={`${IMG_BASE_URL}${selectedMovie.poster_path}`}
+                    alt={selectedMovie.title}
+                    className="h-[104px] w-[74px] object-cover mr-4"
+                  />
+                  <p className="pt-4 pr-1 text-xs break-words overflow-hidden">
+                    {selectedMovie.title}
+                  </p>
+                </div>
+              ) : (
+                <p className="mx-auto text-2xl text-white/50">영화선택</p>
+              )}
+            </div>
+
+            <div className="w-[187px] h-24 border-r-[3px] border-white/20 flex items-center px-2">
+              {selectedTheater || selectedDate ? (
+                <div className="flex">
+                  <div className="flex flex-col text-xs mr-1">
+                    <span className="mb-1">극장</span>
+                    <span className="mb-1">일시</span>
+                    <span className="mb-1">상영관</span>
+                    <span>인원</span>
+                  </div>
+
+                  <div className="flex flex-col text-xs font-bold">
+                    <span className="mb-1">
+                      {selectedTheater ? `CGV ${selectedTheater} >` : "-"}
+                    </span>
+                    <span className="mb-1">
+                      {selectedDate ? `${selectedDate}` : "-"}
+                    </span>
+                    <span className="mb-1">상영관</span>
+                  </div>
+                </div>
+              ) : (
+                <p className="mx-auto text-2xl text-white/50">극장선택</p>
+              )}
+            </div>
+
             <div>
-              <h3 className="font-bold">
-                {selectedMovie ? selectedMovie.title : ""}
-              </h3>
-              <p>
-                {selectedTheater} | {selectedDate}
-              </p>
+              <p>{selectedDate}</p>
             </div>
           </div>
 
-          <button className="bg-red-600 text-white px-6 py-2 rounded">
+          <button className="w-[106px] h-full bg-[#343433] rounded-xl border-[3px] border-[#979797] text-white ">
             좌석선택
           </button>
         </div>
