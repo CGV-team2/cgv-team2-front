@@ -53,7 +53,6 @@ const TicketBooking = () => {
     }
 
     setDateRange(dates);
-    setSelectedDate(formatDate(today));
     setCurrentMonth(today.getMonth());
     setCurrentYear(today.getFullYear());
   };
@@ -306,7 +305,7 @@ const TicketBooking = () => {
             </div>
 
             <div>
-              <p>{selectedDate}</p>
+              <p></p>
             </div>
           </div>
 
