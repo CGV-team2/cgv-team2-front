@@ -11,6 +11,10 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import MovieDetail from "./pages/MovieDetail";
 import Ticket from "./pages/Ticket";
+import SeatSelectionPage from "./pages/SeatSelectionPage";
+import PaymentPage from "./pages/PaymentPage";
+import Banner from "./components/Banner";
+import FixedNav from "./components/FixedNav";
 
 const routes = [
   { path: "/", element: <Home /> },
@@ -18,31 +22,51 @@ const routes = [
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <SignUp /> },
   { path: "/ticket", element: <Ticket /> },
+  { path: "/ticket/seat", element: <SeatSelectionPage /> },
+  { path: "/ticket/payment", element: <PaymentPage /> },
 ];
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showFixedNav, setShowFixedNav] = useState(false);
 
   useEffect(() => {
-    //토큰 확인 전, 후 헤더 구분
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token); //이중 부정 연산자
+    setIsLoggedIn(!!token); // Double negation to check token existence
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowFixedNav(window.scrollY > 194);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   return (
-    /* 최소 크기를 100vh로 설정 후, flex-grow 사용해서 contents 부분이 Footer를 제외한 나머지 부분을 차지하게 해서 항상 Footer가 가장 아래에 bottom-0 처럼 위치하도록 함 */
     <div className="flex flex-col min-h-screen">
       <BrowserRouter>
-        <div className="flex-grow">
+        <div
+          className="flex-grow"
+          style={{ marginTop: showFixedNav ? "60px" : "0" }}
+        >
           {isLoggedIn ? (
             <>
+              <Banner />
               <HeaderAfterLogin />
               <Nav />
+              {showFixedNav && <FixedNav />}
             </>
           ) : (
             <>
+              <Banner />
               <HeaderBeforeLogin />
               <Nav />
+              {showFixedNav && <FixedNav />}
             </>
           )}
           <Routes>

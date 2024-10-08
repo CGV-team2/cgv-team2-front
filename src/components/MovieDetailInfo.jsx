@@ -57,7 +57,7 @@ export default function MovieDetailInfo() {
   ];
 
   return (
-    <div className="w-[65%] min-w-[980px] mx-auto p-20 font-bold">
+    <div className="pretendard w-[996px] min-w-[980px] mx-auto py-24 px-10 font-bold">
       <div className="flex justify-center items-center">
         <MoviePoster path={movie.poster_path} title={movie.title} />
 
