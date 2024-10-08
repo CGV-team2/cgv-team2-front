@@ -1,11 +1,31 @@
+// src/components/SeatSelection.jsx
+
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import BookingHeaderButton from "./BookingHeaderButton";
 import TheaterSeating from "./TheaterSeating";
 
 import { IoMdRefresh } from "react-icons/io";
 import { HiMagnifyingGlassPlus } from "react-icons/hi2";
+import { FaChevronRight } from "react-icons/fa";
+
+export const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 export default function SeatSelection() {
+  const location = useLocation();
+  const {
+    selectedMovie,
+    selectedTheater,
+    selectedDate,
+    selectedTime,
+    selectedHall,
+  } = location.state;
+
+  const getWeekday = (date) => {
+    const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
+    return weekdays[date.getDay()];
+  };
+
   const [counts, setCounts] = useState({
     adult: 0,
     youth: 0,
@@ -14,6 +34,7 @@ export default function SeatSelection() {
   });
 
   const totalPeople = Object.values(counts).reduce((acc, val) => acc + val, 0);
+  const [selectedSeats, setSelectedSeats] = useState([]);
 
   const handleCountChange = (type, count) => {
     const newCounts = { ...counts, [type]: count };
@@ -23,6 +44,8 @@ export default function SeatSelection() {
     );
     if (newTotal <= 8) {
       setCounts(newCounts);
+      // 선택된 좌석 초기화 (인원 수 변경 시)
+      setSelectedSeats([]);
     }
   };
 
@@ -50,6 +73,59 @@ export default function SeatSelection() {
     );
   };
 
+  // 종료 시간 계산 함수
+  const calculateEndTime = (startTime) => {
+    if (!startTime) return "";
+    const [hour, minute] = startTime.split(":").map(Number);
+    const startDate = new Date();
+    startDate.setHours(hour);
+    startDate.setMinutes(minute);
+    startDate.setSeconds(0);
+    startDate.setMilliseconds(0);
+
+    // 125분 추가
+    startDate.setMinutes(startDate.getMinutes() + 125);
+
+    const endHour = startDate.getHours().toString().padStart(2, "0");
+    const endMinute = startDate.getMinutes().toString().padStart(2, "0");
+
+    return `${endHour}:${endMinute}`;
+  };
+
+  // 종료 시간
+  const endTime = selectedTime ? calculateEndTime(selectedTime) : "";
+
+  // 카테고리 라벨 매핑
+  const countLabels = {
+    adult: "일반",
+    youth: "청소년",
+    senior: "경로",
+    child: "우대",
+  };
+
+  // 카테고리별 선택된 인원 수 및 가격 계산
+  const priceMapping = {
+    adult: 15000,
+    youth: 10000,
+    senior: 12000,
+    child: 11000,
+  };
+
+  const categoryTotals = Object.entries(counts)
+    .filter(([type, count]) => count > 0)
+    .map(([type, count]) => ({
+      type: countLabels[type],
+      count,
+      total: count * priceMapping[type],
+    }));
+
+  const totalAmount = categoryTotals.reduce((acc, { total }) => acc + total, 0);
+
+  // 카테고리별 선택된 인원 수 표시
+  const countsDisplay = categoryTotals
+    .map(({ type, count }) => `${type} ${count}명`)
+    .join(", ");
+
   return (
     <>
       <div className="w-[1316px] mx-auto mt-8 select-none flex">
@@ -67,7 +143,13 @@ export default function SeatSelection() {
             <>
               <div className="w-full h-9 bg-[#333333] text-base text-white font-bold flex justify-center items-center flex-shrink-0 relative">
                 <span>인원 / 좌석</span>
-                <span className="absolute right-4 flex items-center text-sm font-normal cursor-pointer">
+                <span
+                  className="absolute right-4 flex items-center text-sm font-normal cursor-pointer"
+                  onClick={() => {
+                    setCounts({ adult: 0, youth: 0, senior: 0, child: 0 });
+                    setSelectedSeats([]);
+                  }}
+                >
                   다시하기
                   <IoMdRefresh size={24} />
                 </span>
@@ -93,9 +175,9 @@ export default function SeatSelection() {
 
                 <div className="w-[54%] mt-4 px-5 relative">
                   <div className="flex items-center text-xs">
-                    <div>CGV 명동역 씨네라이브러리</div>
+                    <div>CGV {selectedTheater}</div>
                     <div className="mx-3 h-4 w-px bg-gray-300"></div>
-                    <div>4관 11층</div>
+                    <div>{selectedHall}</div>
                     <div className="mx-3 h-4 w-px bg-gray-300"></div>
                     <div>
                       남은좌석{" "}
@@ -105,7 +187,9 @@ export default function SeatSelection() {
                   </div>
 
                   <div className="helvetica mt-1.5 font-bold text-[22.8px] text-[#5A5A5A]">
-                    2024.10.09 (수) 09:50 ~ 11:49
+                    {selectedDate && selectedTime
+                      ? `${selectedDate} (${getWeekday(new Date(selectedDate))}) ${selectedTime} ~ ${endTime}`
+                      : "날짜와 시간을 선택해주세요"}
                   </div>
 
                   <button className="absolute bottom-4 right-5 text-xs py-[1px] px-1.5 rounded text-white bg-[#926F60] border border-[#745447]">
@@ -116,7 +200,12 @@ export default function SeatSelection() {
 
               <div className="pt-5 flex">
                 <div className="w-[85%] flex flex-col items-center pl-5">
-                  <TheaterSeating totalPeople={totalPeople} />
+                  <TheaterSeating
+                    totalPeople={totalPeople}
+                    selectedSeats={selectedSeats}
+                    setSelectedSeats={setSelectedSeats}
+                    bookedSeats={["A1", "B2", "C3", "D4", "E5"]}
+                  />
                 </div>
 
                 <div className="w-[15%] text-[#333333]/[.8]">
@@ -153,6 +242,100 @@ export default function SeatSelection() {
             alt="Right Ad"
             className="w-full h-full object-cover"
           />
+        </div>
+      </div>
+
+      <div className="pretendard h-32 bg-[#1D1D1C] text-white/80 p-3">
+        <div className="w-[996px] h-full mx-auto flex justify-between items-center">
+          <div className="flex items-center">
+            <div className="w-[212px] h-24 border-r-[3px] border-white/20 flex items-center overflow-hidden">
+              {selectedMovie ? (
+                <div className="flex">
+                  <img
+                    src={`${IMG_BASE_URL}${selectedMovie.poster_path}`}
+                    alt={selectedMovie.title}
+                    className="h-[104px] w-[74px] object-cover mr-4"
+                  />
+                  <p className="pt-4 pr-1 text-xs break-words overflow-hidden">
+                    {selectedMovie.title}
+                  </p>
+                </div>
+              ) : (
+                <p className="mx-auto text-2xl text-white/50">영화선택</p>
+              )}
+            </div>
+
+            <div className="w-[187px] h-24 border-r-[3px] border-white/20 flex items-center px-2">
+              {selectedTheater || selectedDate ? (
+                <div className="flex">
+                  <div className="flex flex-col text-xs mr-1">
+                    <span className="mb-1">극장</span>
+                    <span className="mb-1">일시</span>
+                    <span className="mb-1">상영관</span>
+                    <span>인원</span>
+                  </div>
+
+                  <div className="flex flex-col text-xs font-bold">
+                    <span className="mb-1">
+                      {selectedTheater ? `CGV ${selectedTheater} >` : "-"}
+                    </span>
+                    <span className="mb-1">
+                      {selectedDate && selectedTime
+                        ? `${selectedDate}(${getWeekday(new Date(selectedDate))}) ${selectedTime} ~ ${endTime}`
+                        : selectedDate
+                          ? `${selectedDate}(${getWeekday(new Date(selectedDate))})`
+                          : "-"}
+                    </span>
+                    <span className="mb-1">{selectedHall || "-"}</span>
+                    <span>{countsDisplay || "-"}</span>
+                  </div>
+                </div>
+              ) : (
+                <p className="mx-auto text-2xl text-white/50">극장선택</p>
+              )}
+            </div>
+          </div>
+
+          {/* 선택된 좌석 및 가격 정보 */}
+          <div className="ml-5 flex items-center text-2xl text-white/50">
+            {selectedSeats.length === 0 ? (
+              <>
+                <FaChevronRight size={33} />
+                좌석선택
+              </>
+            ) : (
+              <div className="flex items-center">
+                <FaChevronRight size={33} className="mr-2" />
+                <span>선택된 좌석: {selectedSeats.join(", ")}</span>
+              </div>
+            )}
+          </div>
+
+          {/* 선택된 좌석 및 가격 정보 추가 */}
+          {selectedSeats.length > 0 && (
+            <div className="ml-5 mt-2 text-sm text-white">
+              {categoryTotals.map(({ type, count, total }) => (
+                <div key={type}>
+                  <span>
+                    {type}: {count}명 × {total.toLocaleString()}원
+                  </span>
+                </div>
+              ))}
+              <div className="mt-2 font-bold">
+                총 금액: {totalAmount.toLocaleString()}원
+              </div>
+            </div>
+          )}
+
+          <button
+            className={`pretendard w-[106px] h-full rounded-xl border-[3px] font-bold text-white flex flex-col justify-center items-center ${
+              selectedDate
+                ? "border-[#DC3434] bg-[#BF2828]"
+                : "border-[#979797] bg-[#343433]"
+            }`}
+          >
+            결제선택
+          </button>
         </div>
       </div>
     </>

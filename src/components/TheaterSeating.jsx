@@ -48,15 +48,19 @@ const SeatRow = ({
   );
 };
 
-const TheaterSeating = ({ totalPeople }) => {
-  const [selectedSeats, setSelectedSeats] = useState([]);
+const TheaterSeating = ({
+  totalPeople,
+  selectedSeats,
+  setSelectedSeats,
+  bookedSeats,
+}) => {
   const [hoverSeats, setHoverSeats] = useState([]);
   const rows = ["A", "B", "C", "D", "E"];
   const seatsPerRow = 5;
-  const bookedSeats = ["A1", "B2", "C3", "D4", "E5"];
 
   const handleSeatClick = (seat) => {
-    if (selectedSeats.length >= totalPeople) return; // 선택이 완료되면 클릭을 막음
+    if (selectedSeats.length >= totalPeople && !selectedSeats.includes(seat))
+      return; // 선택이 완료되면 클릭을 막음
 
     const seatIndex = selectedSeats.indexOf(seat);
     if (seatIndex !== -1) {
@@ -68,7 +72,10 @@ const TheaterSeating = ({ totalPeople }) => {
 
       if (totalPeople - selectedSeats.length >= 2 && seatNumber < seatsPerRow) {
         const adjacentSeat = `${rowLetter}${seatNumber + 1}`;
-        if (!bookedSeats.includes(adjacentSeat)) {
+        if (
+          !bookedSeats.includes(adjacentSeat) &&
+          !selectedSeats.includes(adjacentSeat)
+        ) {
           seatsToAdd.push(adjacentSeat);
         }
       }

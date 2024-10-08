@@ -42,7 +42,7 @@ const TheaterSelector = ({ onSelectTheater }) => {
           {regionsWithCount.map(({ name, count }) => (
             <li
               key={name}
-              className={`text-sm text-right cursor-pointer p-2 border border-[#F2F0E5] ${
+              className={`font-normal text-xs text-right cursor-pointer p-2 border border-[#F2F0E5] ${
                 selectedRegion === name ? "bg-[#F2F0E5]" : ""
               }`}
               onClick={() => handleRegionClick(name)}
