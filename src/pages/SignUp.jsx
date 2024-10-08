@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 export default function SignUp() {
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
+  const [name, setName] = useState("");
+  const [birth, setBirth] = useState("");
   const [idValid, setIdValid] = useState(false);
   const [pwValid, setPwValid] = useState(false);
   const [notAllow, setNotAllow] = useState(true);
@@ -29,13 +31,21 @@ export default function SignUp() {
     }
   };
 
+  const handleName = (e) => {
+    setName(e.target.value);
+  };
+
+  const handleBirth = (e) => {
+    setBirth(e.target.value);
+  };
+
   useEffect(() => {
-    if (idValid && pwValid) {
+    if (idValid && pwValid && name && birth) {
       setNotAllow(false);
     } else {
       setNotAllow(true);
     }
-  }, [idValid, pwValid]);
+  }, [idValid, pwValid, name, birth]);
 
   return (
     <>
@@ -45,24 +55,40 @@ export default function SignUp() {
           <br /> 가입에 필요한 정보를 작성해주세요
         </div>
 
-        <div className="my-8">
-          <div className="text-xs font-bold ml-1 mb-2">아이디</div>
+        <div>
+          <div className="text-xs font-bold ml-1 mb-2">이름</div>
           <input
             className="border-2 rounded-md w-full h-12 px-4"
             type="text"
-            placeholder="test1234"
-            value={id}
-            onChange={handleId}
+            placeholder="이름을 입력해주세요"
+            value={name}
+            onChange={handleName}
           />
-          {!idValid && id.length > 0 && (
-            <div className="text-[12px] text-red-500 mt-[8px] ml-1">
-              영문, 숫자 포함 6자 이상 입력해주세요
-            </div>
-          )}
-          {/* { a && b && (div)} */}
-        </div>
 
-        <div>
+          <div className="text-xs font-bold ml-1 mb-2 mt-5">생일</div>
+          <input
+            className="border-2 rounded-md w-full h-12 px-4"
+            type="date"
+            value={birth}
+            onChange={handleBirth}
+          />
+
+          <div className="my-8">
+            <div className="text-xs font-bold ml-1 mb-2 mt-5">아이디</div>
+            <input
+              className="border-2 rounded-md w-full h-12 px-4"
+              type="text"
+              placeholder="test1234"
+              value={id}
+              onChange={handleId}
+            />
+            {!idValid && id.length > 0 && (
+              <div className="text-[12px] text-red-500 mt-[8px] ml-1">
+                영문, 숫자 포함 6자 이상 입력해주세요
+              </div>
+            )}
+          </div>
+
           <div className="text-xs font-bold ml-1 mb-2">비밀번호</div>
           <input
             className="border-2 rounded-md w-full h-12 px-4"

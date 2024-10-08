@@ -281,7 +281,7 @@ export default function SeatSelection() {
                     </span>
                     <span className="mb-1">
                       {selectedDate && selectedTime
-                        ? `${selectedDate}(${getWeekday(new Date(selectedDate))}) ${selectedTime} ~ ${endTime}`
+                        ? `${selectedDate}(${getWeekday(new Date(selectedDate))}) ${selectedTime}`
                         : selectedDate
                           ? `${selectedDate}(${getWeekday(new Date(selectedDate))})`
                           : "-"}
@@ -294,38 +294,40 @@ export default function SeatSelection() {
                 <p className="mx-auto text-2xl text-white/50">극장선택</p>
               )}
             </div>
-          </div>
 
-          {/* 선택된 좌석 및 가격 정보 */}
-          <div className="ml-5 flex items-center text-2xl text-white/50">
-            {selectedSeats.length === 0 ? (
-              <>
-                <FaChevronRight size={33} />
-                좌석선택
-              </>
-            ) : (
-              <div className="flex items-center">
-                <FaChevronRight size={33} className="mr-2" />
-                <span>선택된 좌석: {selectedSeats.join(", ")}</span>
+            {/* 선택된 좌석 및 가격 정보 */}
+            <div className="w-[170px] h-24 border-r-[3px] border-white/20 ml-5 flex items-center text-2xl text-white/50">
+              {selectedSeats.length === 0 ? (
+                <>
+                  <FaChevronRight size={33} />
+                  좌석선택
+                </>
+              ) : (
+                <div className="flex items-center text-white/80">
+                  <span className="text-xs mr-1">좌석번호 </span>
+                  <span className="font-bold text-xs mr-1">
+                    {selectedSeats.join(", ")}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* 선택된 좌석 및 가격 정보 추가 */}
+            {selectedSeats.length > 0 && (
+              <div className="ml-5 mt-2 text-sm text-white">
+                {categoryTotals.map(({ type, count, total }) => (
+                  <div key={type}>
+                    <span>
+                      {type}: {count}명 × {total.toLocaleString()}원
+                    </span>
+                  </div>
+                ))}
+                <div className="mt-2 font-bold">
+                  총 금액: {totalAmount.toLocaleString()}원
+                </div>
               </div>
             )}
           </div>
-
-          {/* 선택된 좌석 및 가격 정보 추가 */}
-          {selectedSeats.length > 0 && (
-            <div className="ml-5 mt-2 text-sm text-white">
-              {categoryTotals.map(({ type, count, total }) => (
-                <div key={type}>
-                  <span>
-                    {type}: {count}명 × {total.toLocaleString()}원
-                  </span>
-                </div>
-              ))}
-              <div className="mt-2 font-bold">
-                총 금액: {totalAmount.toLocaleString()}원
-              </div>
-            </div>
-          )}
 
           <button
             className={`pretendard w-[106px] h-full rounded-xl border-[3px] font-bold text-white flex flex-col justify-center items-center ${
