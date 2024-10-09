@@ -15,7 +15,7 @@ export default function Movie() {
   const [sortOrder, setSortOrder] = useState("1");
   const [selectedMovie, setSelectedMovie] = useState(null);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const fetchMovies = async () => {
       const options = {
         method: "GET",
@@ -45,13 +45,14 @@ export default function Movie() {
     };
 
     fetchMovies();
-  }, [location]);
+  }, [location]); */
 
-  /*   useEffect(() => {
+  useEffect(() => {
     const fetchMovies = async () => {
       try {
         const response = await api().get("/update-movies");
         console.log(response);
+
         const sortedMovies = response.data.sort(
           (a, b) => b.vote_average - a.vote_average
         );
@@ -67,7 +68,7 @@ export default function Movie() {
     };
 
     fetchMovies();
-  }, [location]); */
+  }, [location]);
 
   //셀렉트 박스 정렬방식
   const sortMovies = (order) => {

@@ -7,7 +7,7 @@ const InfoItem = ({ label, value }) => (
   <div className="flex text-[#333333] mb-1">
     <div className=" flex items-center">
       <span>
-        {label} : {value}
+        {label} : {Array.isArray(value) ? value.join(", ") : value}
       </span>
     </div>
   </div>
