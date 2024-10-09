@@ -62,11 +62,12 @@ export default function SignUp() {
         });
         console.log(response);
 
-        if (response.data.token) {
-          const token = response.data.token;
+        if (response.data) {
+          const token = response.data;
           localStorage.setItem("token", token);
 
           navigate("/", { replace: true });
+          window.location.reload();
         } else {
           console.log("token 발급 실패");
           navigate("/", { replace: true });
@@ -81,14 +82,14 @@ export default function SignUp() {
 
   return (
     <>
-      <div className="pretendard min-w-[350px] w-1/4 mx-auto my-20">
+      <div className="pretendard min-w-[350px] w-1/4 mx-auto my-10">
         <div className="text-2xl font-bold">
           CGV에 오신 것을 환영합니다!
           <br /> 가입에 필요한 정보를 작성해주세요
         </div>
 
         <div>
-          <div className="text-xs font-bold ml-1 mb-2">이름</div>
+          <div className="text-xs font-bold mt-5 ml-1 mb-2">이름</div>
           <input
             className="border-2 rounded-md w-full h-12 px-4"
             type="text"
@@ -105,7 +106,7 @@ export default function SignUp() {
             onChange={handleBirth}
           />
 
-          <div className="my-8">
+          <div>
             <div className="text-xs font-bold ml-1 mb-2 mt-5">아이디</div>
             <input
               className="border-2 rounded-md w-full h-12 px-4"
@@ -121,7 +122,7 @@ export default function SignUp() {
             )}
           </div>
 
-          <div className="text-xs font-bold ml-1 mb-2">비밀번호</div>
+          <div className="text-xs font-bold ml-1 mb-2 mt-5">비밀번호</div>
           <input
             className="border-2 rounded-md w-full h-12 px-4"
             type="password"
@@ -136,7 +137,7 @@ export default function SignUp() {
           )}
         </div>
         <button
-          className="bg-red-400 w-full h-12 text-white font-bold rounded-lg mt-12"
+          className="bg-[#FB4357] w-full h-12 text-white font-bold rounded-lg mt-8"
           disabled={notAllow}
           onClick={handleSignUp}
         >

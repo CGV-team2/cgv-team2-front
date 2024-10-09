@@ -1,34 +1,38 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { FaRegThumbsUp } from "react-icons/fa";
+import { PiEggDuotone } from "react-icons/pi";
 
 const InfoItem = ({ label, value }) => (
-  <div className="flex justify-between items-center">
-    <div className="text-gray-600 flex items-center">
-      <span className="bg-[#FB4357] w-1 h-[18px] mr-3" />
-      <span>{label}</span>
+  <div className="flex text-[#333333] mb-1">
+    <div className=" flex items-center">
+      <span>
+        {label} : {value}
+      </span>
     </div>
-    <span className="text-gray-800">{value}</span>
   </div>
 );
 
 const MoviePoster = ({ path, title }) => (
   <img
-    className="w-1/2 object-fill rounded-xl shadow-xl shadow-black/50 mr-16"
+    className="w-[185px] h-[260px] object-fill mr-8"
     src={`https://image.tmdb.org/t/p/w500${path}`}
     alt={title}
   />
 );
 
 const MovieTitle = ({ title, originalTitle }) => (
-  <div className="border-b-[3px] border-black/[.2]">
-    <div className="text-3xl">{title}</div>
-    <div className="text-2xl mt-3 mb-8">{originalTitle}</div>
+  <div className="">
+    <div className="text-2xl">{title}</div>
+    <div className="font-normal text-sm text-[#666666] mb-4">
+      {originalTitle}
+    </div>
   </div>
 );
 
 const BookingButton = ({ onClick }) => (
   <button
-    className="h-14 w-full bg-[#FB4357] text-white text-xl rounded-full mt-4"
+    className="h-[35px] font-normal rounded border bg-[#FB4357] text-white py-1 px-6"
     onClick={onClick}
   >
     예매하기
@@ -49,37 +53,69 @@ export default function MovieDetailInfo() {
   }
 
   const movieInfo = [
-    { label: "언어", value: movie.original_language },
-    { label: "등급", value: movie.adult ? "청소년 관람불가" : "전체 관람가" },
     { label: "장르", value: movie.genre_ids.join(", ") },
+    {
+      label: "기본정보",
+      value: [
+        movie.adult ? "청소년 관람불가" : "전체 관람가",
+        movie.original_language,
+      ],
+    },
     { label: "개봉일", value: movie.release_date },
-    { label: "평점", value: movie.vote_average.toFixed(1) },
   ];
 
   return (
-    <div className="pretendard w-[996px] min-w-[980px] mx-auto py-24 px-10 font-bold">
-      <div className="flex justify-center items-center">
+    <div className="pretendard w-[996px] min-w-[980px] mx-auto mt-10 font-bold">
+      <div className="flex">
         <MoviePoster path={movie.poster_path} title={movie.title} />
 
-        <div className="w-1/2 text-center">
+        <div className="w-[760px]">
           <MovieTitle
             title={movie.title}
             originalTitle={movie.original_title}
           />
 
-          <div className="space-y-3 text-lg px-14 my-8">
+          <div className="text-[#666666] font-normal flex items-center border-b border-b-[#666666]/[.4] pb-2 mb-4">
+            <span className="mr-3 font-bold">평점</span>
+            <FaRegThumbsUp size={15} />
+            <span className="text-sm ml-0.5">
+              {movie.vote_average.toFixed(1)}
+            </span>
+          </div>
+
+          <div className="text-sm">
             {movieInfo.map((item, index) => (
               <InfoItem key={index} label={item.label} value={item.value} />
             ))}
           </div>
 
-          <BookingButton onClick={navigateToTicketPage} />
+          <div className="flex mt-6">
+            <button className="h-[35px] font-normal rounded border border-[#333333] py-1 px-5 flex justify-center items-center mr-2">
+              <PiEggDuotone className="mr-1" />
+              프리에그
+            </button>
+            <BookingButton onClick={navigateToTicketPage} />
+          </div>
         </div>
       </div>
 
-      <div className="mt-16 px-5">
-        <p className="text-xl mb-4 pb-4 border-b-2 border-black/[.3]">줄거리</p>
-        <p className="text-lg text-black/[.5]">{movie.overview}</p>
+      <div className="flex items-center mb-14">
+        <div className="w-[80%]">
+          <p className="text-lg mb-4 pb-4 border-b-2 border-black/[.3]">
+            줄거리
+          </p>
+          <p className="text-black/[.5]">{movie.overview}</p>
+        </div>
+
+        <div className="w-[20%] flex justify-end">
+          <div className="w-[160px] h-[300px]">
+            <img
+              src="https://adimg.cgv.co.kr/images/202302/house/CGV_BUGS_160x300.png"
+              alt="Left Ad"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

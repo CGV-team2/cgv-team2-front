@@ -54,7 +54,9 @@ export default function Login() {
           const token = response.data;
           localStorage.setItem("token", token);
           console.log(response);
+
           navigate("/", { replace: true });
+          window.location.reload();
         } else {
           alert("유효하지 않은 아이디, 비밀번호입니다.");
         }
@@ -67,7 +69,7 @@ export default function Login() {
 
   return (
     <>
-      <div className="pretendard min-w-[350px] w-1/4 mx-auto my-20">
+      <div className="pretendard min-w-[350px] w-1/4 mx-auto my-10">
         <div className="text-2xl font-bold">
           아이디와 비밀번호를
           <br /> 입력해주세요.
@@ -106,7 +108,7 @@ export default function Login() {
           )}
         </div>
         <button
-          className="bg-red-400 w-full h-12 text-white font-bold rounded-lg mt-12"
+          className="bg-[#FB4357] w-full h-12 text-white font-bold rounded-lg mt-12"
           disabled={notAllow}
           onClick={handleLogin}
         >

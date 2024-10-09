@@ -4,6 +4,7 @@ import axios from "axios";
 
 import { FaRegClock } from "react-icons/fa";
 import { FaRegThumbsUp } from "react-icons/fa";
+import api from "../api/api";
 
 export const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -37,7 +38,7 @@ export default function Movie() {
         if (location.state && location.state.selectedMovie) {
           setSelectedMovie(location.state.selectedMovie);
         }
-        console.log(sortedMovies);
+        console.log(response);
       } catch (error) {
         console.error("API를 불러오지 못했습니다.", error);
       }
@@ -45,6 +46,28 @@ export default function Movie() {
 
     fetchMovies();
   }, [location]);
+
+  /*   useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await api().get("/update-movies");
+        console.log(response);
+        const sortedMovies = response.data.sort(
+          (a, b) => b.vote_average - a.vote_average
+        );
+        setMovies(sortedMovies);
+
+        if (location.state && location.state.selectedMovie) {
+          setSelectedMovie(location.state.selectedMovie);
+        }
+        console.log(sortedMovies);
+      } catch (error) {
+        console.error("API를 불러오지 못했습니다.", error);
+      }
+    };
+
+    fetchMovies();
+  }, [location]); */
 
   //셀렉트 박스 정렬방식
   const sortMovies = (order) => {
