@@ -41,7 +41,7 @@ export default function MovieDetailInfo() {
   const movie = location.state?.movie;
 
   const navigateToTicketPage = () => {
-    navigate("/ticket", { state: { movie: movie } });
+    navigate("/ticket", { state: { selectedMovie: movie } }); // selectedMovie로 키 이름 변경
   };
 
   if (!movie) {

@@ -1,17 +1,18 @@
-// src/components/SeatSelection.jsx
-
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import BookingHeaderButton from "./BookingHeaderButton";
 import TheaterSeating from "./TheaterSeating";
 
 import { IoMdRefresh } from "react-icons/io";
 import { HiMagnifyingGlassPlus } from "react-icons/hi2";
 import { FaChevronRight } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa6";
+import { FaArrowRight } from "react-icons/fa";
 
 export const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 export default function SeatSelection() {
+  const navigate = useNavigate();
   const location = useLocation();
   const {
     selectedMovie,
@@ -35,6 +36,7 @@ export default function SeatSelection() {
 
   const totalPeople = Object.values(counts).reduce((acc, val) => acc + val, 0);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [isPayment, setIsPayment] = useState(false);
 
   const handleCountChange = (type, count) => {
     const newCounts = { ...counts, [type]: count };
@@ -105,10 +107,10 @@ export default function SeatSelection() {
 
   // 카테고리별 선택된 인원 수 및 가격 계산
   const priceMapping = {
-    adult: 15000,
-    youth: 10000,
-    senior: 12000,
-    child: 11000,
+    adult: 14000,
+    youth: 11000,
+    senior: 7000,
+    child: 5000,
   };
 
   const categoryTotals = Object.entries(counts)
@@ -116,6 +118,7 @@ export default function SeatSelection() {
     .map(([type, count]) => ({
       type: countLabels[type],
       count,
+      price: priceMapping[type], // 단가 추가
       total: count * priceMapping[type],
     }));
 
@@ -125,6 +128,46 @@ export default function SeatSelection() {
   const countsDisplay = categoryTotals
     .map(({ type, count }) => `${type} ${count}명`)
     .join(", ");
+
+  useEffect(() => {
+    if (
+      selectedMovie &&
+      selectedDate &&
+      selectedTheater &&
+      selectedTime &&
+      selectedSeats.length > 0
+    ) {
+      setIsPayment(true);
+    } else {
+      setIsPayment(false);
+    }
+  }, [
+    selectedMovie,
+    selectedDate,
+    selectedTheater,
+    selectedTime,
+    selectedSeats,
+  ]);
+
+  const handleNavigatePayment = () => {
+    if (isPayment) {
+      navigate("/ticket/payment", {
+        state: {
+          selectedMovie: {
+            ...selectedMovie,
+            posterUrl: `${IMG_BASE_URL}${selectedMovie.poster_path}`,
+          },
+          selectedTheater,
+          selectedDate,
+          selectedTime,
+          selectedHall,
+          selectedSeats,
+          counts,
+          totalAmount,
+        },
+      });
+    }
+  };
 
   return (
     <>
@@ -247,6 +290,16 @@ export default function SeatSelection() {
 
       <div className="pretendard h-32 bg-[#1D1D1C] text-white/80 p-3">
         <div className="w-[996px] h-full mx-auto flex justify-between items-center">
+          <button
+            className="pretendard w-[106px] h-full rounded-xl border-[3px] font-bold text-white flex flex-col justify-center items-center border-[#979797] bg-[#343433]"
+            onClick={() => {
+              navigate("/ticket");
+            }}
+          >
+            <FaArrowLeft size={41} className="mb-1" />
+            영화선택
+          </button>
+
           <div className="flex items-center">
             <div className="w-[212px] h-24 border-r-[3px] border-white/20 flex items-center overflow-hidden">
               {selectedMovie ? (
@@ -296,14 +349,14 @@ export default function SeatSelection() {
             </div>
 
             {/* 선택된 좌석 및 가격 정보 */}
-            <div className="w-[170px] h-24 border-r-[3px] border-white/20 ml-5 flex items-center text-2xl text-white/50">
+            <div className="w-[170px] h-24 p-2 border-r-[3px] border-white/20 text-2xl text-white/50">
               {selectedSeats.length === 0 ? (
-                <>
+                <div className="h-full flex items-center justify-center">
                   <FaChevronRight size={33} />
                   좌석선택
-                </>
+                </div>
               ) : (
-                <div className="flex items-center text-white/80">
+                <div className="h-full flex items-center text-white/80">
                   <span className="text-xs mr-1">좌석번호 </span>
                   <span className="font-bold text-xs mr-1">
                     {selectedSeats.join(", ")}
@@ -314,16 +367,23 @@ export default function SeatSelection() {
 
             {/* 선택된 좌석 및 가격 정보 추가 */}
             {selectedSeats.length > 0 && (
-              <div className="ml-5 mt-2 text-sm text-white">
-                {categoryTotals.map(({ type, count, total }) => (
-                  <div key={type}>
-                    <span>
-                      {type}: {count}명 × {total.toLocaleString()}원
-                    </span>
+              <div className="w-[140px] ml-4 font-bold text-xs text-white/80">
+                {categoryTotals.map(({ type, count, price }) => (
+                  <div
+                    key={type}
+                    className="flex items-center justify-between "
+                  >
+                    <p className="font-normal">{type}</p>
+                    <p>
+                      {price.toLocaleString()}원 × {count}
+                    </p>
                   </div>
                 ))}
-                <div className="mt-2 font-bold">
-                  총 금액: {totalAmount.toLocaleString()}원
+                <div className="mt-2 flex items-center justify-between">
+                  <p className="font-normal">총 금액 </p>
+                  <p className="text-[#BF2828]">
+                    {totalAmount.toLocaleString()}원
+                  </p>
                 </div>
               </div>
             )}
@@ -331,11 +391,14 @@ export default function SeatSelection() {
 
           <button
             className={`pretendard w-[106px] h-full rounded-xl border-[3px] font-bold text-white flex flex-col justify-center items-center ${
-              selectedDate
-                ? "border-[#DC3434] bg-[#BF2828]"
-                : "border-[#979797] bg-[#343433]"
+              isPayment
+                ? "border-[#DC3434] bg-[#BF2828] cursor-pointer"
+                : "border-[#979797] bg-[#343433] cursor-not-allowed"
             }`}
+            onClick={handleNavigatePayment}
+            disabled={!isPayment}
           >
+            <FaArrowRight size={41} className="mb-1" />
             결제선택
           </button>
         </div>

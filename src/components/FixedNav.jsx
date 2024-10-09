@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { PiArrowUpThin } from "react-icons/pi";
 
 const navItems = [
@@ -54,6 +54,8 @@ export default function FixedNav() {
   const [isVisible, setIsVisible] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const navRef = useRef(null);
+  const location = useLocation(); // 현재 경로 확인
+  const navigate = useNavigate(); // 페이지 이동을 위한 navigate 함수
 
   useEffect(() => {
     const handleScroll = () => {
@@ -99,6 +101,11 @@ export default function FixedNav() {
     });
   };
 
+  // 예매하기 버튼 클릭 시 /ticket 페이지로 이동
+  const handleReserveButtonClick = () => {
+    navigate("/ticket");
+  };
+
   if (!isVisible) return null;
 
   return (
@@ -117,7 +124,7 @@ export default function FixedNav() {
               />
               <ul className="flex text-base font-bold h-[60px] items-center">
                 {navItems.map((item, index) => (
-                  <li key={item.to} onMouseEnter={handleMouseEnter}>
+                  <li key={item.text} onMouseEnter={handleMouseEnter}>
                     <NavLink
                       to={item.to}
                       className={({ isActive }) =>
@@ -146,14 +153,14 @@ export default function FixedNav() {
               <div className="grid grid-cols-6 gap-4 p-4">
                 {navItems.map((item, index) => (
                   <div
-                    key={index}
+                    key={item.text}
                     className="text-left border-[#333333]/[.07] border-r last:border-0"
                   >
                     <h3 className="font-bold mb-2">{item.text}</h3>
                     <ul>
                       {item.dropdown.map((dropdownItem, i) => (
                         <li
-                          key={i}
+                          key={`${item.text}-${i}`}
                           className="text-sm text-[#333333]/[.8] py-1.5 hover:underline cursor-pointer"
                         >
                           {dropdownItem}
@@ -169,12 +176,17 @@ export default function FixedNav() {
       </div>
 
       <div className="pretendard fixed right-[10%] bottom-20 flex">
-        <button
-          onClick={scrollToTop}
-          className="h-[50px] w-[136px] bg-gradient-to-r from-[#FB4356] to-[#EF632F] text-white font-bold rounded-full drop-shadow-lg flex justify-center items-center mr-3"
-        >
-          예매하기
-        </button>
+        {/* 현재 페이지가 "/ticket" 또는 "/ticket/seat"가 아닐 경우에만 버튼 표시 */}
+        {location.pathname !== "/ticket" &&
+          location.pathname !== "/ticket/seat" &&
+          location.pathname !== "/ticket/payment" && (
+            <button
+              onClick={handleReserveButtonClick}
+              className="h-[50px] w-[136px] bg-gradient-to-r from-[#FB4356] to-[#EF632F] text-white font-bold rounded-full drop-shadow-lg flex justify-center items-center mr-3"
+            >
+              예매하기
+            </button>
+          )}
 
         <button
           onClick={scrollToTop}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import TheaterSelector from "./TheaterSelector";
 import BookingHeaderButton from "./BookingHeaderButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { IoMdRefresh } from "react-icons/io";
 import { FaChevronRight } from "react-icons/fa";
@@ -12,6 +12,7 @@ export const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 const TicketBooking = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [selectedTheater, setSelectedTheater] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
@@ -39,6 +40,10 @@ const TicketBooking = () => {
       try {
         const response = await axios.request(options);
         setMovies(response.data.results);
+
+        if (location.state && location.state.selectedMovie) {
+          setSelectedMovie(location.state.selectedMovie);
+        }
       } catch (error) {
         console.error("API를 불러오지 못했습니다.", error);
       }
@@ -46,7 +51,7 @@ const TicketBooking = () => {
 
     fetchMovies();
     initializeDates();
-  }, []);
+  }, [location]);
 
   const initializeDates = () => {
     const today = new Date();
@@ -172,7 +177,7 @@ const TicketBooking = () => {
   const renderScreenings = () => {
     if (!selectedMovie || !selectedTheater || !selectedDate) {
       return (
-        <div className="flex items-center justify-center h-full text-lg text-gray-500">
+        <div className="text-center mt-48 h-full font-normal text-xs text-gray-500">
           영화, 극장, 날짜를 선택해주세요
         </div>
       );
@@ -226,21 +231,15 @@ const TicketBooking = () => {
                   <h2 className="w-full h-9 bg-[#333333] text-base text-white font-bold flex justify-center items-center flex-shrink-0">
                     영화
                   </h2>
-                  <div className="pt-4 px-4 w-full flex text-center">
-                    <div className="w-[33.3%] border-x-2 border-[#333333]">
-                      전체
-                    </div>{" "}
-                    <div className="w-[33.3%]">아트하우스</div>{" "}
-                    <div className="w-[33.3%]">특별관</div>
-                  </div>
+
                   <ul className="overflow-auto flex-grow p-4">
                     {movies.map((movie, index) => (
                       <li
                         key={index}
-                        className={`cursor-pointer p-1 ${
-                          selectedMovie && selectedMovie.id === movie.id
-                            ? "bg-[#333333] text-white"
-                            : ""
+                        className={`cursor-pointer p-2  ${
+                          selectedMovie &&
+                          selectedMovie.id === movie.id &&
+                          "bg-[#333333] text-white"
                         }`}
                         onClick={() => setSelectedMovie(movie)}
                       >
@@ -300,7 +299,7 @@ const TicketBooking = () => {
       </div>
 
       <div className="pretendard h-32 bg-[#1D1D1C] text-white/80 p-3">
-        <div className="w-[996px] h-full mx-auto flex justify-between items-center">
+        <div className="w-[996px] h-full mx-auto flex justify-between items-center px-2">
           <div className="flex items-center">
             <div className="w-[212px] h-24 border-r-[3px] border-white/20 flex items-center overflow-hidden">
               {selectedMovie ? (
@@ -363,6 +362,7 @@ const TicketBooking = () => {
           <button
             className={`pretendard w-[106px] h-full rounded-xl border-[3px] font-bold text-white flex flex-col justify-center items-center ${isSeatSelected ? "border-[#DC3434] bg-[#BF2828]" : "border-[#979797] bg-[#343433]"}`}
             onClick={handleNavigateSeat}
+            disabled={!isSeatSelected}
           >
             <FaArrowRight size={41} className="mb-1" />
             좌석선택

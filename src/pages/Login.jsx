@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import api from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [idValid, setIdValid] = useState(false);
@@ -36,6 +39,31 @@ export default function Login() {
       setNotAllow(true);
     }
   }, [idValid, pwValid]);
+
+  const handleLogin = async () => {
+    if (id.length == 0 && pw.length == 0) {
+      alert("아이디와 패스워드를 입력해주세요");
+    } else {
+      try {
+        const response = await api().post("/Member/signup", {
+          user_id: id,
+          password: pw,
+        });
+
+        if (response.status === 200 && response.data) {
+          const token = response.data;
+          localStorage.setItem("token", token);
+          console.log(response);
+          navigate("/", { replace: true });
+        } else {
+          alert("유효하지 않은 아이디, 비밀번호입니다.");
+        }
+      } catch (error) {
+        console.error("Login.jsx handleLogin error : ", error);
+        alert("로그인 실패");
+      }
+    }
+  };
 
   return (
     <>
@@ -80,6 +108,7 @@ export default function Login() {
         <button
           className="bg-red-400 w-full h-12 text-white font-bold rounded-lg mt-12"
           disabled={notAllow}
+          onClick={handleLogin}
         >
           확인
         </button>

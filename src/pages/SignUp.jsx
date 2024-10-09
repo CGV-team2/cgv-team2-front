@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import api from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [name, setName] = useState("");
@@ -46,6 +49,35 @@ export default function SignUp() {
       setNotAllow(true);
     }
   }, [idValid, pwValid, name, birth]);
+
+  const handleSignUp = async () => {
+    const data = { name: name, user_id: id, password: pw };
+
+    if (name && idValid && pwValid) {
+      try {
+        const response = await api().post("/Member/signup", data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log(response);
+
+        if (response.data.token) {
+          const token = response.data.token;
+          localStorage.setItem("token", token);
+
+          navigate("/", { replace: true });
+        } else {
+          console.log("token 발급 실패");
+          navigate("/", { replace: true });
+        }
+      } catch (error) {
+        alert("회원가입에 실패했습니다.");
+        navigate("/signup", { replace: true });
+        console.error("handleSignUp response error : ", error.response, error);
+      }
+    }
+  };
 
   return (
     <>
@@ -106,6 +138,7 @@ export default function SignUp() {
         <button
           className="bg-red-400 w-full h-12 text-white font-bold rounded-lg mt-12"
           disabled={notAllow}
+          onClick={handleSignUp}
         >
           확인
         </button>

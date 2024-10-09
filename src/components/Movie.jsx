@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 import { FaRegClock } from "react-icons/fa";
@@ -9,8 +9,10 @@ export const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 export default function Movie() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [movies, setMovies] = useState([]);
   const [sortOrder, setSortOrder] = useState("1");
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -31,7 +33,10 @@ export default function Movie() {
           (a, b) => b.vote_average - a.vote_average
         );
         setMovies(sortedMovies);
-        //setMovies(response.data.results);
+
+        if (location.state && location.state.selectedMovie) {
+          setSelectedMovie(location.state.selectedMovie);
+        }
         console.log(sortedMovies);
       } catch (error) {
         console.error("API를 불러오지 못했습니다.", error);
@@ -39,7 +44,7 @@ export default function Movie() {
     };
 
     fetchMovies();
-  }, []);
+  }, [location]);
 
   //셀렉트 박스 정렬방식
   const sortMovies = (order) => {
@@ -69,7 +74,7 @@ export default function Movie() {
 
   const navigateToTicketPage = (movieId) => {
     const selected = movies.find((movie) => movie.id === movieId);
-    navigate("/ticket", { state: { movie: selected } });
+    navigate("/ticket", { state: { selectedMovie: selected } });
   };
 
   return (
