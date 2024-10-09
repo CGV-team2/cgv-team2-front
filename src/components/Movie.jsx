@@ -54,7 +54,7 @@ export default function Movie() {
         console.log(response);
 
         const sortedMovies = response.data.sort(
-          (a, b) => b.vote_average - a.vote_average
+          (a, b) => b.voteAverage - a.voteAverage
         );
         setMovies(sortedMovies);
 
@@ -75,11 +75,11 @@ export default function Movie() {
     let sortedMovies = [...movies];
     if (order === "1") {
       // Sort by rating (descending)
-      sortedMovies.sort((a, b) => b.vote_average - a.vote_average);
+      sortedMovies.sort((a, b) => b.voteAverage - a.voteAverage);
     } else if (order === "2") {
       // Sort by release date (most recent first)
       sortedMovies.sort(
-        (a, b) => new Date(b.release_date) - new Date(a.release_date)
+        (a, b) => new Date(b.releaseDate) - new Date(a.releaseDate)
       );
     }
     setMovies(sortedMovies);
@@ -158,7 +158,7 @@ export default function Movie() {
                   </div>
 
                   <img
-                    src={`${IMG_BASE_URL}${movie.poster_path}`}
+                    src={`${IMG_BASE_URL}${movie.posterPath}`}
                     alt={movie.title}
                     className="w-full max-h-[260px] cursor-pointer"
                     onClick={() => navigateToMovieDetail(movie.id)}
@@ -176,13 +176,13 @@ export default function Movie() {
                       <div className="flex items-center">
                         <FaRegClock />
                         <span className="mx-1">개봉일</span>
-                        <span>{movie.release_date}</span>
+                        <span>{movie.releaseDate}</span>
                       </div>
                       <div className="mx-2 h-4 w-px bg-gray-300"></div>
                       <div className="flex items-center">
                         <FaRegThumbsUp />
                         <span className="mx-1">평점</span>
-                        <span>{movie.vote_average.toFixed(1)}</span>
+                        <span>{movie.voteAverage.toFixed(1)}</span>
                       </div>
                     </div>
                   </div>

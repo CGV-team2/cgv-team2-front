@@ -42,7 +42,7 @@ export default function HeaderBeforeLogin() {
           icon={IoPersonAddOutline}
           text="회원가입"
         />{" "}
-        <HeaderLink to="/mypage" icon={IoPersonOutline} text="MY CGV" />
+        <HeaderLink to="/mycgv" icon={IoPersonOutline} text="MY CGV" />
         <HeaderLink
           to="/center"
           icon={RiCustomerService2Line}

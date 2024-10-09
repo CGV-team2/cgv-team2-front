@@ -110,7 +110,7 @@ export default function FixedNav() {
 
   return (
     <>
-      <div className="pretendard fixed top-0 left-0 right-0 bg-gradient-to-r from-[#D74357] to-[#EF632F] text-white shadow-md z-50">
+      <div className="pretendard fixed z-50 top-0 left-0 right-0 bg-gradient-to-r from-[#D74357] to-[#EF632F] text-white shadow-md z-50">
         <div
           ref={navRef}
           className="w-full relative"

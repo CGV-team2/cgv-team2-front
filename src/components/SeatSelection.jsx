@@ -8,6 +8,7 @@ import { HiMagnifyingGlassPlus } from "react-icons/hi2";
 import { FaChevronRight } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa6";
 import { FaArrowRight } from "react-icons/fa";
+import api from "../api/api";
 
 export const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -21,6 +22,47 @@ export default function SeatSelection() {
     selectedTime,
     selectedHall,
   } = location.state;
+
+  const [bookedSeats, setBookedSeats] = useState([]);
+
+  useEffect(() => {
+    const formattedDate = new Date(selectedDate);
+    const [hours, minutes] = selectedTime.split(":");
+
+    // 시간과 분을 UTC로 설정
+    formattedDate.setUTCHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+
+    const showtime = formattedDate.toISOString().slice(0, 19);
+
+    const data = {
+      movieName: selectedMovie.title,
+      theaterName: selectedTheater,
+      screenName: selectedHall,
+      showtime: showtime,
+    };
+
+    const Booked = async () => {
+      try {
+        console.log(data);
+        const response = await api().get("/seats/available", { params: data });
+        console.log(response);
+
+        // 응답 데이터에서 seatNumber만 추출
+        const bookedSeatNumbers = response.data.map((seat) => seat.seatNumber);
+        setBookedSeats(bookedSeatNumbers);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    Booked();
+  }, [
+    selectedMovie,
+    selectedTheater,
+    selectedDate,
+    selectedTime,
+    selectedHall,
+  ]);
 
   const getWeekday = (date) => {
     const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
@@ -155,7 +197,7 @@ export default function SeatSelection() {
         state: {
           selectedMovie: {
             ...selectedMovie,
-            posterUrl: `${IMG_BASE_URL}${selectedMovie.poster_path}`,
+            posterUrl: `${IMG_BASE_URL}${selectedMovie.posterPath}`,
           },
           selectedTheater,
           selectedDate,
@@ -247,7 +289,7 @@ export default function SeatSelection() {
                     totalPeople={totalPeople}
                     selectedSeats={selectedSeats}
                     setSelectedSeats={setSelectedSeats}
-                    bookedSeats={["A1", "B2", "C3", "D4", "E5"]}
+                    bookedSeats={bookedSeats}
                   />
                 </div>
 
@@ -305,7 +347,7 @@ export default function SeatSelection() {
               {selectedMovie ? (
                 <div className="flex">
                   <img
-                    src={`${IMG_BASE_URL}${selectedMovie.poster_path}`}
+                    src={`${IMG_BASE_URL}${selectedMovie.posterPath}`}
                     alt={selectedMovie.title}
                     className="h-[104px] w-[74px] object-cover mr-4"
                   />

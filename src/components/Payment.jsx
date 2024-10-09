@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import BookingHeaderButton from "./BookingHeaderButton";
 import { IoIosArrowDown } from "react-icons/io";
 import { FaArrowLeft, FaArrowRight, FaCheck } from "react-icons/fa";
+import api from "../api/api";
 
 export const IMG_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -122,7 +123,7 @@ export default function Payment() {
         state: {
           selectedMovie: {
             ...selectedMovie,
-            posterUrl: `${IMG_BASE_URL}${selectedMovie.poster_path}`,
+            posterUrl: `${IMG_BASE_URL}${selectedMovie.posterPath}`,
           },
           selectedMovie,
           selectedTheater,
@@ -138,6 +139,39 @@ export default function Payment() {
   const countsDisplay = categoryTotals
     .map(({ type, count }) => `${type} ${count}명`)
     .join(", ");
+
+  const onClickPayment = async () => {
+    const formattedDate = new Date(selectedDate);
+    const [hours, minutes] = selectedTime.split(":");
+
+    // 시간과 분을 UTC로 설정
+    formattedDate.setUTCHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+
+    const showtime = formattedDate.toISOString().slice(0, 19);
+
+    const data = {
+      movieName: selectedMovie.title,
+      theaterName: selectedTheater,
+      screenName: selectedHall,
+      showtime: showtime,
+      seatNumbers: selectedSeats,
+    };
+
+    console.log(data);
+
+    try {
+      const response = await api().post("/seats/book", data);
+      console.log(response);
+
+      navigate("/", {
+        state: { bookingDetails: response.data },
+      });
+    } catch (error) {
+      console.error("예약 중 오류 발생:", error);
+
+      alert("좌석 예약 중 오류가 발생했습니다. 다시 시도해 주세요.");
+    }
+  };
 
   return (
     <>
@@ -365,7 +399,7 @@ export default function Payment() {
               {selectedMovie ? (
                 <div className="flex">
                   <img
-                    src={`${IMG_BASE_URL}${selectedMovie.poster_path}`}
+                    src={`${IMG_BASE_URL}${selectedMovie.posterPath}`}
                     alt={selectedMovie.title}
                     className="h-[104px] w-[74px] object-cover mr-4"
                   />
@@ -433,6 +467,7 @@ export default function Payment() {
                 : "border-[#979797] bg-[#343433] cursor-not-allowed"
             }`}
             disabled={totalAmount <= 0}
+            onClick={onClickPayment}
           >
             <FaCheck size={44} className="mr-3" />
             결제하기

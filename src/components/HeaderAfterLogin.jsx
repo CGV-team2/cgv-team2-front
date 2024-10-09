@@ -50,7 +50,7 @@ export default function HeaderAfterLogin() {
           <SlLock size={23} className="mb-2 text-[#3D3D3D]" />
           <span>로그아웃</span>
         </div>
-        <HeaderLink to="/mypage" icon={IoPersonOutline} text="MY CGV" />
+        <HeaderLink to="/mycgv" icon={IoPersonOutline} text="MY CGV" />
         <HeaderLink
           to="/center"
           icon={RiCustomerService2Line}

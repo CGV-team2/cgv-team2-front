@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/api";
 import TheaterSelector from "./TheaterSelector";
 import BookingHeaderButton from "./BookingHeaderButton";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -24,7 +24,7 @@ const TicketBooking = () => {
   const [currentYear, setCurrentYear] = useState(null);
   const [isSeatSelected, setIsSeatSelected] = useState(false);
 
-  useEffect(() => {
+  /*  useEffect(() => {
     const fetchMovies = async () => {
       const options = {
         method: "GET",
@@ -44,6 +44,30 @@ const TicketBooking = () => {
         if (location.state && location.state.selectedMovie) {
           setSelectedMovie(location.state.selectedMovie);
         }
+      } catch (error) {
+        console.error("API를 불러오지 못했습니다.", error);
+      }
+    };
+
+    fetchMovies();
+    initializeDates();
+  }, [location]); */
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await api().get("/update-movies");
+        console.log(response);
+
+        const sortedMovies = response.data.sort(
+          (a, b) => b.voteAverage - a.voteAverage
+        );
+        setMovies(sortedMovies);
+
+        if (location.state && location.state.selectedMovie) {
+          setSelectedMovie(location.state.selectedMovie);
+        }
+        console.log(sortedMovies);
       } catch (error) {
         console.error("API를 불러오지 못했습니다.", error);
       }
@@ -154,7 +178,7 @@ const TicketBooking = () => {
         state: {
           selectedMovie: {
             ...selectedMovie,
-            posterUrl: `${IMG_BASE_URL}${selectedMovie.poster_path}`,
+            posterUrl: `${IMG_BASE_URL}${selectedMovie.posterPath}`,
           },
           selectedMovie,
           selectedTheater,
@@ -305,7 +329,7 @@ const TicketBooking = () => {
               {selectedMovie ? (
                 <div className="flex">
                   <img
-                    src={`${IMG_BASE_URL}${selectedMovie.poster_path}`}
+                    src={`${IMG_BASE_URL}${selectedMovie.posterPath}`}
                     alt={selectedMovie.title}
                     className="h-[104px] w-[74px] object-cover mr-4"
                   />

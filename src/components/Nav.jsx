@@ -123,7 +123,7 @@ export default function Nav() {
 
         {/* 전체 드롭다운 메뉴 */}
         <div
-          className={`absolute top-[52px] left-0 w-full bg-white border-b border-[#333333]/[.5] transition-all duration-500 ease-in-out transform ${
+          className={`absolute z-50 top-[52px] left-0 w-full bg-white border-b border-[#333333]/[.5] transition-all duration-500 ease-in-out transform ${
             dropdownVisible
               ? "opacity-100 translate-y-0"
               : "opacity-0 -translate-y-4 pointer-events-none"

@@ -53,21 +53,21 @@ export default function MovieDetailInfo() {
   }
 
   const movieInfo = [
-    { label: "장르", value: movie.genre_ids.join(", ") },
+    { label: "장르", value: movie.genres.join(", ") },
     {
       label: "기본정보",
       value: [
         movie.adult ? "청소년 관람불가" : "전체 관람가",
-        movie.original_language,
+        movie.originalLanguage,
       ],
     },
-    { label: "개봉일", value: movie.release_date },
+    { label: "개봉일", value: movie.releaseDate },
   ];
 
   return (
     <div className="pretendard w-[996px] min-w-[980px] mx-auto mt-10 font-bold">
       <div className="flex">
-        <MoviePoster path={movie.poster_path} title={movie.title} />
+        <MoviePoster path={movie.posterPath} title={movie.title} />
 
         <div className="w-[760px]">
           <MovieTitle
@@ -79,7 +79,7 @@ export default function MovieDetailInfo() {
             <span className="mr-3 font-bold">평점</span>
             <FaRegThumbsUp size={15} />
             <span className="text-sm ml-0.5">
-              {movie.vote_average.toFixed(1)}
+              {movie.voteAverage.toFixed(1)}
             </span>
           </div>
 

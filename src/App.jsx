@@ -15,6 +15,7 @@ import SeatSelectionPage from "./pages/SeatSelectionPage";
 import PaymentPage from "./pages/PaymentPage";
 import Banner from "./components/Banner";
 import FixedNav from "./components/FixedNav";
+import MyCgv from "./pages/MyCgv";
 
 const routes = [
   { path: "/", element: <Home /> },
@@ -24,6 +25,7 @@ const routes = [
   { path: "/ticket", element: <Ticket /> },
   { path: "/ticket/seat", element: <SeatSelectionPage /> },
   { path: "/ticket/payment", element: <PaymentPage /> },
+  { path: "/mycgv", element: <MyCgv /> },
 ];
 
 function App() {

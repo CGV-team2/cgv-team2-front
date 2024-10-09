@@ -7,7 +7,7 @@ export default function api() {
   const instance = axios.create({ baseURL: "http://localhost:8080" });
 
   if (token) {
-    instance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    instance.defaults.headers.common["Authorization"] = `${token}`;
   }
   return instance;
 }
